@@ -3,7 +3,7 @@
 </template>
 
 <script>
-  import * as WHS from 'whs'
+  // import * as WHS from 'whs'
   import {
     BufferGeometry,
     Mesh,
@@ -22,7 +22,7 @@
     created () {
 
     },
-    mounted () {
+    /*mounted () {
       this.app = new WHS.App([
         new WHS.ElementModule({
           container: document.getElementById('whs')
@@ -97,7 +97,7 @@
         }
       }).addTo(this.app);
       this.app.start()
-    }
+    }*/
   }
 </script>
 
