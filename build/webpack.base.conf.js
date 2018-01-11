@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 const utils = require('./utils')
-require("babel-polyfill")
+// require("babel-polyfill")
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 
@@ -16,7 +16,8 @@ module.exports = {
   /*entry: {
     app: './src/main.js'
   },*/
-  entry: ['babel-polyfill', './src/main.js'],
+  // entry: ['babel-polyfill', './src/main.js'],
+  entry: ['./src/main.js'],
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
