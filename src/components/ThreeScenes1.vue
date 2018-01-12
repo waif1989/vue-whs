@@ -24,6 +24,11 @@
   import * as THREE from 'three'
   export default {
     name: 'ThreeScenes1',
+    data () {
+      return {
+        requestAnimationFrameId: null
+      }
+    },
     created () {
     },
     mounted () {
@@ -82,8 +87,8 @@
       camera.lookAt(new THREE.Vector3(0, 0, 0));
       cube.rotation.x = 1;
       cube.rotation.y = 1;
-      function animate() {
-        requestAnimationFrame( animate );
+      const animate = () => {
+        this.requestAnimationFrameId = requestAnimationFrame( animate );
         renderer.render( scene, camera );
       }
       if (detector.webgl) {
@@ -93,6 +98,13 @@
         const warning = detector.getWebGLErrorMessage();
         document.getElementById('threescenes1').appendChild(warning);
       }
+    },
+    beforeDestroy () {
+      window.cancelAnimationFrame(this.requestAnimationFrameId)
+    },
+    destroyed () {
+      const container = document.getElementById('threescenes1')
+      container.parentNode.removeChild(container)
     }
   }
 </script>
