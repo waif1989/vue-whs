@@ -173,7 +173,7 @@
         requestAnimationFrame(render);
 
         function render() {
-  
+
           controls.update();
 
           // Update the decoration positions
