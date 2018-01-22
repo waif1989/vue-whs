@@ -14,9 +14,10 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "msgpack-js": "^0.3.0",
     "three": "^0.89.0",
+    "three-addons": "^1.1.0",
     "three-orbitcontrols": "^2.0.0",
+    "threejs-addons": "^1.1.10",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
