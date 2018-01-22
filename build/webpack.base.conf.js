@@ -75,6 +75,10 @@ module.exports = {
       {
         test: /\.obj$/,
         loader: 'webpack-obj-loader'
+      },
+      {
+        test: /\.mtl$/,
+        loader: 'mtl-loader'
       }
     ]
   },

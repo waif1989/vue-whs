@@ -19,7 +19,7 @@
   // import * as THREELib from "threejs-addons";
   // const THREE = THREELib();
   import * as OrbitControls from 'three-orbitcontrols';
-  // import FEMALE02 from '@/assets/models/obj/female02/female02.obj'
+  import FEMALE02 from '@/assets/models/obj/female02/female02.obj';
   export default {
     mounted () {
       if ( !detector.webgl ) detector.addGetWebGLMessage();
@@ -68,11 +68,15 @@
       });*/
 
       const loader = new OBJLoader();
-      loader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/obj/female02/female02.obj', (object) => {
+     /* const object = loader.parse(FEMALE02);
+      scene.add(object);*/
+     /* loader.load('../assets/models/obj/female02/female02.obj', (object) => {
+        console.log('object---', object)
         object.position.y = -95;
         scene.add(object);
-      });
-      console.log('OBJLoader', loader)
+      }, () => {}, () => {});*/
+      /*const object = loader.parse(FEMALE02);
+      console.log('object--', object)*/
 
       const renderer = new THREE.WebGLRenderer();
       renderer.setSize( window.innerWidth, window.innerHeight );
