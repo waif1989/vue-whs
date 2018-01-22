@@ -71,6 +71,10 @@ module.exports = {
       {
         test: /\.json$/,
         loader: 'json-loader'
+      },
+      {
+        test: /\.obj$/,
+        loader: 'webpack-obj-loader'
       }
     ]
   },

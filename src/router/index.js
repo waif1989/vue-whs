@@ -6,6 +6,7 @@ import ThreeScenes1 from '@/components/ThreeScenes1'
 import ThreeScenes2 from '@/components/ThreeScenes2'
 import ThreeScenes3 from '@/components/ThreeScenes3'
 import ThreeScenes4 from '@/components/ThreeScenes4'
+import ThreeScenes5 from '@/components/ThreeScenes5'
 
 Vue.use(Router)
 
@@ -36,6 +37,10 @@ export default new Router({
       path: '/threescenes4',
       name: 'ThreeScenes4',
       component: ThreeScenes4
+    }, {
+      path: '/threescenes5',
+      name: 'ThreeScenes5',
+      component: ThreeScenes5
     }
   ]
 })
