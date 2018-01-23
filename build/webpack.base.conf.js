@@ -30,6 +30,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      'three-extras': resolve('node_modules/three/examples/js')
     }
   },
   module: {
@@ -79,6 +80,10 @@ module.exports = {
       {
         test: /\.mtl$/,
         loader: 'mtl-loader'
+      },
+      {
+        test: resolve('node_modules/three/examples/js'),
+        loader: 'imports-loader?this=>window'
       }
     ]
   },
