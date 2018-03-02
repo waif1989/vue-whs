@@ -15,6 +15,7 @@
 <script>
   import detector from '../utils/detector';
   import dat from 'dat.gui';
+  import Stats from 'stats.js';
   const THREE = require('three');
   require('imports-loader?THREE=three!exports-loader?THREE.OrbitControls!three-extras/controls/OrbitControls');
   require('imports-loader?THREE=three!exports-loader?THREE.OBJLoader!three-extras/loaders/OBJLoader');
@@ -22,7 +23,24 @@
   export default {
     data () {
       return {
-        globalObject: null
+        globalObject: null,
+        stats: null
+      }
+    },
+    methods: {
+      addControlGui (controlObject) {
+        const gui = new dat.GUI();
+        gui.add(controlObject, 'rotationSpeed', -0.01, 0.01);
+        gui.add(controlObject, 'opacity', 0.1, 1);
+        gui.addColor(controlObject, 'color');
+      },
+      addStatsObject () {
+        this.stats = new Stats();
+        this.stats.setMode(0);
+        this.stats.domElement.style.position = 'absolute';
+        this.stats.domElement.style.left = '0px';
+        this.stats.domElement.style.top = '0px';
+        document.body.appendChild( this.stats.domElement );
       }
     },
     mounted () {
@@ -36,28 +54,21 @@
       renderer.setClearColor( 0xfff6e6 );
       document.getElementById('threescenes6').appendChild( renderer.domElement );
 
-      const ambient = new THREE.AmbientLight( 0xffffff );
-      scene.add( ambient );
-
-      const directionalLight = new THREE.DirectionalLight( 0xffffff );
-      directionalLight.position.set( 0, 0, 1 ).normalize();
-      scene.add( directionalLight );
-
-
-      const addControlGui = (controlObject) => {
-        const gui = new dat.GUI();
-        gui.add(controlObject, 'rotationSpeed', -0.01, 0.01);
-        gui.add(controlObject, 'opacity', 0.1, 1);
-        gui.addColor(controlObject, 'color');
-      };
-
       const datGUIControl = new function () {
         this.rotationSpeed = 0.005;
         this.opacity = 0.6;
         this.color = 0xffffff;
       };
 
-      addControlGui(datGUIControl);
+      this.addStatsObject(); // Show FPS in top left corner of browser
+      this.addControlGui(datGUIControl); // Show control bar in top right corner of browser
+
+      const ambient = new THREE.AmbientLight( 0xffffff );
+      scene.add( ambient );
+
+      const directionalLight = new THREE.DirectionalLight( 0xffffff );
+      directionalLight.position.set( 0, 0, 1 ).normalize();
+      scene.add( directionalLight );
 
       const objLoader = new THREE.OBJLoader();
       const mtlLoader = new THREE.MTLLoader();
@@ -76,6 +87,7 @@
             item.material.opacity = datGUIControl.opacity;
             item.material.color = new THREE.Color(datGUIControl.color);
           });
+          this.stats.update();
           renderer.render( scene, camera );
         }, () => {}, () => {} );
       });
@@ -88,6 +100,7 @@
           item.material.opacity = datGUIControl.opacity;
           item.material.color = new THREE.Color(datGUIControl.color);
         });
+        this.stats.update();
         renderer.render(scene, camera);
       } );
 
