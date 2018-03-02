@@ -14,16 +14,27 @@
 
 <script>
   import detector from '../utils/detector';
-  var THREE = require('three');
+  import dat from 'dat.gui';
+  const THREE = require('three');
   require('imports-loader?THREE=three!exports-loader?THREE.OrbitControls!three-extras/controls/OrbitControls');
   require('imports-loader?THREE=three!exports-loader?THREE.OBJLoader!three-extras/loaders/OBJLoader');
   require('imports-loader?THREE=three!exports-loader?THREE.MTLLoader!three-extras/loaders/MTLLoader');
   export default {
+    data () {
+      return {
+        globalObject: null
+      }
+    },
     mounted () {
       if ( !detector.webgl ) detector.addGetWebGLMessage();
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-      camera.position.set(0,0.5,10);
+      camera.position.set(-100,300,250);
+
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      renderer.setClearColor( 0xfff6e6 );
+      document.getElementById('threescenes6').appendChild( renderer.domElement );
 
       const ambient = new THREE.AmbientLight( 0xffffff );
       scene.add( ambient );
@@ -31,6 +42,22 @@
       const directionalLight = new THREE.DirectionalLight( 0xffffff );
       directionalLight.position.set( 0, 0, 1 ).normalize();
       scene.add( directionalLight );
+
+
+      const addControlGui = (controlObject) => {
+        const gui = new dat.GUI();
+        gui.add(controlObject, 'rotationSpeed', -0.01, 0.01);
+        gui.add(controlObject, 'opacity', 0.1, 1);
+        gui.addColor(controlObject, 'color');
+      };
+
+      const datGUIControl = new function () {
+        this.rotationSpeed = 0.005;
+        this.opacity = 0.6;
+        this.color = 0xffffff;
+      };
+
+      addControlGui(datGUIControl);
 
       const objLoader = new THREE.OBJLoader();
       const mtlLoader = new THREE.MTLLoader();
@@ -40,32 +67,30 @@
         objLoader.setMaterials(materials);
         objLoader.setPath( '/static/models/obj/female02/' );
         objLoader.load( 'female02.obj',(object) => {
-          object.position.y = - 95;
+          // object.position.y = - 45;
+          console.log('object----', object)
+          this.globalObject = object;
+          object.position.set(0,0,0);
           scene.add( object );
+          object.children.forEach((item) => {
+            item.material.opacity = datGUIControl.opacity;
+            item.material.color = new THREE.Color(datGUIControl.color);
+          });
+          renderer.render( scene, camera );
         }, () => {}, () => {} );
       });
-      /*objloader.load('/static/models/obj/female02/female02.obj', (object) => {
-        const mtlLoader = new MTLLoader();
-        mtlLoader.setBaseUrl('/static/models/obj/female02');
-        mtlLoader.load('/static/models/obj/female02/female02.mtl', (materials) => {
-          materials.preload();
-          objloader.setMaterials( materials );
-          object.position.y = -95;
-          scene.add(object);
-        });
-
-      });*/
-
-      const renderer = new THREE.WebGLRenderer();
-      renderer.setSize( window.innerWidth, window.innerHeight );
-      renderer.setClearColor( 0xfff6e6 );
-      renderer.render( scene, camera );
-      document.getElementById('threescenes6').appendChild( renderer.domElement );
 
       const controls = new THREE.OrbitControls( camera, renderer.domElement );
       controls.target = new THREE.Vector3(0,0,0);
       controls.maxPolarAngle = Math.PI / 2;
-      controls.addEventListener( 'change', function() { renderer.render(scene, camera); } );
+      controls.addEventListener( 'change', () => {
+        this.globalObject.children.forEach((item) => {
+          item.material.opacity = datGUIControl.opacity;
+          item.material.color = new THREE.Color(datGUIControl.color);
+        });
+        renderer.render(scene, camera);
+      } );
+
     }
   }
 </script>
