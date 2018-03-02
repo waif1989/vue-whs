@@ -56,9 +56,10 @@
     },
     mounted () {
       if ( !detector.webgl ) detector.addGetWebGLMessage();
+      var textureLoader = new THREE.TextureLoader();
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-      camera.position.set(-100,300,250);
+      camera.position.set(0,100,100);
 
       const renderer = new THREE.WebGLRenderer();
       renderer.setSize( window.innerWidth, window.innerHeight );
@@ -78,12 +79,28 @@
         this.addControlGui(datGUIControl); // Show control bar in top right corner of browser
       }
 
+      scene.background = new THREE.CubeTextureLoader()
+        .setPath('/static/textures/Bridge2/')
+        .load( [ 'posx.jpg', 'negx.jpg', 'posy.jpg', 'negy.jpg', 'posz.jpg', 'negz.jpg' ] );
+
       const ambient = new THREE.AmbientLight( 0xffffff );
       scene.add( ambient );
 
-      const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.2 );
+      const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
       directionalLight.position.set( 0, 100, 1 ).normalize();
       scene.add( directionalLight );
+
+      const groundTexture = textureLoader.load( '/static/textures/Bridge2/negy.jpg' );
+      groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
+      groundTexture.repeat.set( 25, 25 );
+      groundTexture.anisotropy = 16;
+      const groundMaterial = new THREE.MeshLambertMaterial( { map: groundTexture } );
+      const mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 20000, 20000 ), groundMaterial );
+      // mesh.position.y = - 250;
+      mesh.position.y = 0;
+      mesh.rotation.x = - Math.PI / 2;
+      mesh.receiveShadow = true;
+      scene.add( mesh );
 
       const objLoader = new THREE.OBJLoader();
       const mtlLoader = new THREE.MTLLoader();
