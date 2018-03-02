@@ -41,6 +41,17 @@
         this.stats.domElement.style.left = '0px';
         this.stats.domElement.style.top = '0px';
         document.body.appendChild( this.stats.domElement );
+      },
+      isInMobile () {
+        if(/android/i.test(navigator.userAgent)){
+          return true;
+        } else if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+          return true;
+        } else if (/MicroMessenger/i.test(navigator.userAgent)) {
+          return true;
+        } else {
+          return false;
+        }
       }
     },
     mounted () {
@@ -51,23 +62,27 @@
 
       const renderer = new THREE.WebGLRenderer();
       renderer.setSize( window.innerWidth, window.innerHeight );
-      renderer.setClearColor( 0xfff6e6 );
+      renderer.setClearColor( 0xffffff );
       document.getElementById('threescenes6').appendChild( renderer.domElement );
 
-      const datGUIControl = new function () {
-        this.rotationSpeed = 0.005;
-        this.opacity = 0.6;
-        this.color = 0xffffff;
-      };
+      let datGUIControl = null;
+      if (!this.isInMobile()) {
+        // Render function will not work when "addStatsObject" & "addControlGui" execute in mobilephone
+        datGUIControl = new function () {
+          this.rotationSpeed = 0.005;
+          this.opacity = 0.6;
+          this.color = 0xe6e1c2;
+        };
 
-      this.addStatsObject(); // Show FPS in top left corner of browser
-      this.addControlGui(datGUIControl); // Show control bar in top right corner of browser
+        this.addStatsObject(); // Show FPS in top left corner of browser
+        this.addControlGui(datGUIControl); // Show control bar in top right corner of browser
+      }
 
       const ambient = new THREE.AmbientLight( 0xffffff );
       scene.add( ambient );
 
-      const directionalLight = new THREE.DirectionalLight( 0xffffff );
-      directionalLight.position.set( 0, 0, 1 ).normalize();
+      const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.2 );
+      directionalLight.position.set( 0, 100, 1 ).normalize();
       scene.add( directionalLight );
 
       const objLoader = new THREE.OBJLoader();
@@ -83,24 +98,28 @@
           this.globalObject = object;
           object.position.set(0,0,0);
           scene.add( object );
-          object.children.forEach((item) => {
-            item.material.opacity = datGUIControl.opacity;
-            item.material.color = new THREE.Color(datGUIControl.color);
-          });
-          this.stats.update();
+          if (!this.isInMobile()) {
+            object.children.forEach((item) => {
+              item.material.opacity = datGUIControl.opacity;
+              item.material.color = new THREE.Color(datGUIControl.color);
+            });
+            this.stats.update();
+          }
           renderer.render( scene, camera );
         }, () => {}, () => {} );
       });
 
-      const controls = new THREE.OrbitControls( camera, renderer.domElement );
-      controls.target = new THREE.Vector3(0,0,0);
-      controls.maxPolarAngle = Math.PI / 2;
-      controls.addEventListener( 'change', () => {
-        this.globalObject.children.forEach((item) => {
-          item.material.opacity = datGUIControl.opacity;
-          item.material.color = new THREE.Color(datGUIControl.color);
-        });
-        this.stats.update();
+      const cameraControls = new THREE.OrbitControls( camera, renderer.domElement );
+      cameraControls.target = new THREE.Vector3(0,0,0);
+      cameraControls.maxPolarAngle = Math.PI / 2;
+      cameraControls.addEventListener( 'change', () => {
+        if (!this.isInMobile()) {
+          this.globalObject.children.forEach((item) => {
+            item.material.opacity = datGUIControl.opacity;
+            item.material.color = new THREE.Color(datGUIControl.color);
+          });
+          this.stats.update();
+        }
         renderer.render(scene, camera);
       } );
 
